@@ -47,7 +47,7 @@ function Sidebar() {
       <Link to="/">
         <Icon styles="w-[52px] h-[52px] bg-[#2c2f32]" imgUrl={logo} />
       </Link>
-      <div className="flex-1 flex-col justify-between py-4 mt-12 rounded-[20px] items-center bg-[#1c1c24] w-[76px]">
+      <div className="flex-1 flex-col justify-between py-4 mt-12 rounded-[20px] items-center bg-[#1c1c24] w-[76px] relative">
         <div className="flex flex-col justify-center items-center gap-3">
           {navlinks.map((link) => (
             <Icon
@@ -66,6 +66,10 @@ function Sidebar() {
             />
           ))}
         </div>
+        <Icon
+          styles="bg-[#1c1c24] shadow-secondary absolute bottom-5 left-3 items-center flex justify-center w-[52px] h-[52px] rounded-[10px]"
+          imgUrl={sun}
+        />
       </div>
     </div>
   );
