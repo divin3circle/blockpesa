@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Navbar, Sidebar } from "./components";
 import { CampaignDetails, CreateCampaign, Profile, Home } from "./pages";
-
+import { Toaster } from "react-hot-toast";
 export function App() {
   return (
     <main className="relative sm:-8 p-4 bg-[#13131a] min-h-screen flex flex-row">
@@ -19,6 +19,7 @@ export function App() {
           <Route path="/create-details/:id" element={<CampaignDetails />} />
         </Routes>
       </div>
+      <Toaster />
     </main>
   );
 }

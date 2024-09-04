@@ -9,7 +9,7 @@ function CustomButton({
   btnType: "submit" | "reset" | "button" | undefined;
   title: string;
   address: string;
-  onClick: () => void;
+  onClick: any;
 }) {
   return (
     <button
