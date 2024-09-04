@@ -1,5 +1,6 @@
 import { createThirdwebClient, getContract } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
 
 const clientId = "9d271035b137b72596768d09c30498d5";
 

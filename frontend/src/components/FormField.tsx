@@ -12,7 +12,7 @@ function FormField({
   labelName: string;
   placeholder: string;
   inputType: string;
-  value: string;
+  value: any;
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -41,7 +41,7 @@ function FormField({
       ) : (
         <input
           required
-          value={value}
+          value={typeof value === "bigint" ? value.toString() : value}
           name={name}
           step={100}
           min={min}
