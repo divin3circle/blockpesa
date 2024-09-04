@@ -54,7 +54,9 @@ contract CrowdFunding {
     }
 
 
-    function getContributors() {}
+    function getContributors(uint256 _id) view public returns(address[] memory, uint256[] memory) {
+        return (campaigns[_id].contributors, campaigns[_id].contributions);
+    }
 
 
     function getCampaigns() {}
