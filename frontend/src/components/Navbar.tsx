@@ -51,12 +51,12 @@ function Navbar() {
         ) : (
           <Connect />
         )}
-        <Connect />
+        {address && <Connect />}
       </div>
       {/* mobile navigation */}
       <div className="flex sm:hidden justify-between items-center relative">
         <div className="rounded-[10px] bg-[#2c2f32] flex justify-center items-center cursor-pointer">
-          <Connect />
+          {address && <Connect />}
         </div>
         <img
           src={menu}
