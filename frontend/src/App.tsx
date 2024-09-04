@@ -14,6 +14,9 @@ export function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/create-campaign" element={<CreateCampaign />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/create-details/:id" element={<CampaignDetails />} />
         </Routes>
       </div>
     </main>
