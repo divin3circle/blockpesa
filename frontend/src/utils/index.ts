@@ -1,4 +1,4 @@
-export const daysLeft = (deadline: string | number | Date) => {
+export const daysLeft = (deadline: any) => {
   const difference = new Date(deadline).getTime() - Date.now();
   const remainingDays = difference / (1000 * 3600 * 24);
 
