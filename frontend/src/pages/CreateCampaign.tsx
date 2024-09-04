@@ -47,23 +47,25 @@ function CreateCampaign() {
       return;
     } else {
       setIsLoading(true);
-      const transaction = prepareContractCall({
-        contract,
-        method:
-          "function createCampaign(address _owner, string _title, string _description, uint256 _target, uint256 _deadline, string _image) returns (uint256)",
-        params: [
-          form.name,
-          form.title,
-          form.description,
-          ethers.parseUnits(form.goal.toString(), 18),
-          BigInt(new Date(form.deadline).getTime()),
-          form.image,
-        ],
-      });
-      sendTransaction(transaction);
-      console.log(transaction);
-      navigate("/");
-      setIsLoading(false);
+      if (address) {
+        const transaction = prepareContractCall({
+          contract,
+          method:
+            "function createCampaign(address _owner, string _title, string _description, uint256 _target, uint256 _deadline, string _image) returns (uint256)",
+          params: [
+            address,
+            form.title,
+            form.description,
+            ethers.parseUnits(form.goal.toString(), 18),
+            BigInt(new Date(form.deadline).getTime()),
+            form.image,
+          ],
+        });
+        sendTransaction(transaction);
+        console.log(transaction);
+        navigate("/");
+        setIsLoading(false);
+      }
     }
   };
   const getTodayDate = () => {
