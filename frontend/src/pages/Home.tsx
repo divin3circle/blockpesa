@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { readContract } from "thirdweb";
-import { useReadContract } from "thirdweb/react";
 import { contract } from "../client";
 import toast from "react-hot-toast";
 import { ethers } from "ethers";

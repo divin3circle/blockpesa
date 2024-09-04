@@ -32,7 +32,7 @@ function DisplayCampaigns({
       <div className="flex flex-wrap mt-[20px] gap-[26px]">
         {!loading && campaigns.length === 0 && (
           <div className="flex items-center justify-center w-full">
-            <h1 className="kanit-bold text-[18px] text-white text-center">
+            <h1 className="kanit-bold text-[18px] text-gray-500 text-center">
               No campaigns available
             </h1>
           </div>
