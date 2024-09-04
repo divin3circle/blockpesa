@@ -44,7 +44,6 @@ function Home() {
     fetchCampaigns();
   }, []);
 
-  console.log(campaigns);
   return (
     <div>
       <DisplayCampaigns

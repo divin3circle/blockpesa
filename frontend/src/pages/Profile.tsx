@@ -51,7 +51,6 @@ function Profile() {
     fetchCampaigns();
   }, []);
 
-  console.log(campaigns);
   return (
     <div>
       <DisplayCampaigns
