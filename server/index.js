@@ -6,7 +6,7 @@ const cors = require("cors");
 const TokenRoute = require("./routes/token");
 
 app.listen(8000, () => {
-  console.log("server run nicely");
+  console.log("server running nicely");
 });
 
 app.use(express.json());
