@@ -29,4 +29,8 @@ const createToken = async (req, res) => {
   }
 };
 
+const stkPush = async (req, res) => {
+  //stk push code to customer phone.
+};
+
 module.exports = { createToken };
