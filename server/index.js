@@ -12,7 +12,7 @@ app.listen(8000, () => {
 app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => {
-  res.send("Mpesa programming in progress,Time to get paid");
+  res.send("BlockPesa Crowdfunding App");
 });
 
 app.use("/token", TokenRoute);
