@@ -19,6 +19,8 @@ function CampaignDetails() {
   const remainingDays = daysLeft(Number(state.deadline));
 
   const handleDonate = () => {};
+
+  
   const convertToEth = (target: number) => {
     const a = (target / rate).toFixed(3);
     return Number(a).toLocaleString();
