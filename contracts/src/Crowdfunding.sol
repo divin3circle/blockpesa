@@ -1,7 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-contract CrowdFunding {
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract CrowdFunding is Ownable {
+    using SafeERC20 for IERC20;
+
+    //Error declarations
+    error DeadlineMustBeInTheFuture();
+    error CampaignDoesNotExist(uint256 id);
+    error CampaignHasEnded();
+    error CampaignIsNotOpenForContributions();
+    error FailedToSendEther();
+    error CampaignIsNotApproved();
+    error FailedToSendEtherToCampaignOwner();
+    error FailedToSendEtherToContractOwner();
+
     enum CampaignStatus {
         OPEN,
         APPROVED,
@@ -39,14 +55,7 @@ contract CrowdFunding {
     event ContributionMade(uint256 id, address contributor, uint256 amount);
     event CampaignStatusChanged(uint256 id, CampaignStatus status);
 
-    modifier onlyOwner(uint256 _id) {
-        require(
-            msg.sender == campaigns[_id].owner,
-            "Unauthorized: Only owner can perform this action"
-        );
-        _;
-    }
-    constructor() {
+    constructor() Ownable(msg.sender) {
         contractOwner = msg.sender;
     }
 
@@ -58,7 +67,9 @@ contract CrowdFunding {
         uint256 _deadline,
         string memory _image
     ) public returns (uint256) {
-        require(_deadline > block.timestamp, "Deadline must be in the future");
+        if (_deadline < block.timestamp) {
+            revert DeadlineMustBeInTheFuture();
+        }
 
         Campaign storage campaign = campaigns[numberOfCampaigns];
         campaign.id = numberOfCampaigns;
@@ -79,20 +90,25 @@ contract CrowdFunding {
     }
 
     function contributeToCampaign(uint256 _id) public payable {
-        require(_id < numberOfCampaigns, "Campaign does not exist");
+        if (_id < numberOfCampaigns) {
+            revert CampaignDoesNotExist(campaigns[_id].id);
+        }
         Campaign storage campaign = campaigns[_id];
-        require(block.timestamp < campaign.deadline, "Campaign has ended");
-        require(
-            campaign.status == CampaignStatus.OPEN,
-            "Campaign is not open for contributions"
-        );
+        if (block.timestamp < campaign.deadline) {
+            revert CampaignHasEnded();
+        }
+        if (campaign.status != CampaignStatus.OPEN) {
+            revert CampaignIsNotOpenForContributions();
+        }
 
         uint256 amount = msg.value;
         campaign.contributors.push(msg.sender);
         campaign.contributions.push(amount);
 
         (bool sent, ) = payable(campaign.owner).call{value: amount}("");
-        require(sent, "Failed to send Ether");
+        if (!sent) {
+            revert FailedToSendEther();
+        }
 
         campaign.raisedAmount += amount;
 
@@ -107,7 +123,9 @@ contract CrowdFunding {
     function getContributors(
         uint256 _id
     ) public view returns (address[] memory, uint256[] memory) {
-        require(_id < numberOfCampaigns, "Campaign does not exist");
+        if (_id < numberOfCampaigns) {
+            revert CampaignDoesNotExist(campaigns[_id].id);
+        }
         return (campaigns[_id].contributors, campaigns[_id].contributions);
     }
 
@@ -123,39 +141,40 @@ contract CrowdFunding {
     }
 
     function getCampaign(uint256 _id) public view returns (Campaign memory) {
-        require(_id < numberOfCampaigns, "Campaign does not exist");
+        if (_id > numberOfCampaigns) {
+            revert CampaignDoesNotExist(campaigns[_id].id);
+        }
         return campaigns[_id];
     }
 
-    function deleteCampaign(uint256 _id) public onlyOwner(_id) {
+    function deleteCampaign(uint256 _id) public onlyOwner {
         Campaign storage campaign = campaigns[_id];
-        require(campaign.status == CampaignStatus.OPEN, "Campaign is not open");
-
+        //Clarification needed @Dancan254
+        if (campaign.status != CampaignStatus.OPEN) {
+            revert CampaignIsNotOpenForContributions();
+        }
         campaign.status = CampaignStatus.DELETED;
         emit CampaignStatusChanged(_id, CampaignStatus.DELETED);
 
         // Refund logic can be added here if needed
     }
 
-    function requestRefund(uint256 _id) public onlyOwner(_id) {
+    function requestRefund(uint256 _id) public onlyOwner {
         Campaign storage campaign = campaigns[_id];
-        require(
-            campaign.status == CampaignStatus.APPROVED,
-            "Campaign is not approved"
-        );
-
+        if (campaign.status != CampaignStatus.APPROVED) {
+            revert CampaignIsNotApproved();
+        }
         campaign.status = CampaignStatus.REVERTED;
         emit CampaignStatusChanged(_id, CampaignStatus.REVERTED);
 
         // Refund logic can be added here if needed
     }
 
-    function payOutCampaign(uint256 _id) public onlyOwner(_id) {
+    function payOutCampaign(uint256 _id) external onlyOwner {
         Campaign storage campaign = campaigns[_id];
-        require(
-            campaign.status == CampaignStatus.APPROVED,
-            "Campaign is not approved"
-        );
+        if (campaign.status != CampaignStatus.APPROVED) {
+            revert CampaignIsNotApproved();
+        }
 
         uint256 raised = campaign.raisedAmount;
         uint256 tax = (raised * projectTax) / 100;
@@ -164,15 +183,31 @@ contract CrowdFunding {
         (bool sentToOwner, ) = payable(campaign.owner).call{
             value: raised - tax
         }("");
-        require(sentToOwner, "Failed to send Ether to campaign owner");
+        if (!sentToOwner) {
+            revert FailedToSendEtherToCampaignOwner();
+        }
 
         // Transfer the tax to the contract owner
         (bool sentToContractOwner, ) = payable(contractOwner).call{value: tax}(
             ""
         );
-        require(sentToContractOwner, "Failed to send Ether to contract owner");
+        if (!sentToContractOwner) {
+            revert FailedToSendEtherToContractOwner();
+        }
 
         campaign.status = CampaignStatus.PAIDOUT;
         emit CampaignStatusChanged(_id, CampaignStatus.PAIDOUT);
+    }
+    function safeTransfer(IERC20 token, address to, uint256 amount) public {
+        token.safeTransfer(to, amount);
+    }
+
+    function safeTransferFrom(
+        IERC20 token,
+        address from,
+        address to,
+        uint256 amount
+    ) public {
+        token.safeTransferFrom(from, to, amount);
     }
 }
