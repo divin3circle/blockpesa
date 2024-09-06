@@ -26,7 +26,7 @@ contract CrowdFunding {
 
     mapping(uint256 => Campaign) public campaigns;
     uint256 public numberOfCampaigns = 0;
-    uint256 public projectTax = 5; // Example tax percentage
+    uint256 public projectTax = 2;
     address public contractOwner;
 
     event CampaignCreated(uint256 id, address owner, string title, uint256 target, uint256 deadline);
