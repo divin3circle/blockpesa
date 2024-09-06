@@ -29,6 +29,4 @@ const createToken = async (req, res) => {
   }
 };
 
-const stkPush = async (req, res) => {};
-
 module.exports = { createToken };
