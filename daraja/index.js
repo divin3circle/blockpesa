@@ -1,13 +1,12 @@
 const express = require("express");
-const TokenRoute = require("./routes/token");
 const app = express();
+const tokenRoutes = require("./routes/token");
+
+app.use(express.json());
+app.use("/token", tokenRoutes);
+
+app.use(cors());
 
 app.listen(8000, () => {
   console.log("Server is running on port 8000");
 });
-
-app.get("/", (req, res) => {
-  res.send("Welcome to Daraja API");
-});
-
-app.use("/token", TokenRoute);
