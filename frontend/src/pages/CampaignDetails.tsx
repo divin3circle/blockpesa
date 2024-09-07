@@ -7,25 +7,58 @@ import logo from "../assets/logo2.png";
 import { useActiveAccount } from "thirdweb/react";
 import mpesa from "../assets/mpesa.png";
 import { MultiStepLoader } from "../components/ui/multi-step-loader";
+import { prepareContractCall } from "thirdweb";
+import { useSendTransaction } from "thirdweb/react";
+import { contract } from "../client";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 function CampaignDetails() {
-  const rate = 313823.14;
   const { state } = useLocation();
   const account = useActiveAccount();
   const address: string | undefined = account?.address;
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState(0);
   const [contributors, setContributors] = useState<any[]>([]);
+  const { mutate: sendTransaction } = useSendTransaction();
   const [makingPayment, setMakingPayment] = useState(false);
+  const [user, setUser] = useState({});
 
   const remainingDays = daysLeft(Number(state.deadline));
 
-  const handleDonate = () => {
+  const handleDonate = (e: React.FormEvent<HTMLFormElement>) => {
     setMakingPayment(true);
-    // make an mpesa stk push request
-    //confirm payment from mpesa
-    // send amount in eth to the campaign's contract
+    e.preventDefault();
+    const userString = localStorage.getItem("user");
+    if (!userString) {
+      console.error("User not found in localStorage");
+      return;
+    }
+
+    const user = JSON.parse(userString);
+    setUser(user);
+    // Make an mpesa stk push request
+    axios
+      .post("http://localhost:8000/token", {
+        phone: `0${user.phone}`,
+        amount: amount,
+      })
+      .then((response) => {
+        console.log("Mpesa token response:", response.data.ResponseDescription);
+        if (
+          response.data.ResponseDescription ===
+          "Success. Request accepted for processing"
+        ) {
+          toast.success("Mpesa STK push request sent successfully");
+        }
+      })
+      .catch((error) => {
+        console.error("Error during Mpesa token request:", error);
+        setMakingPayment(false);
+      });
   };
+
+  const rate = 313823.14;
 
   const convertToEth = (target: number) => {
     const a = (target / rate).toFixed(3);
