@@ -16,6 +16,8 @@
     "framer-motion": "^11.5.4",
     "react": "^18.3",
     "react-dom": "^18.3",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.26.1",
     "tailwind-merge": "^2.5.2",
     "thirdweb": "^5"
   },
