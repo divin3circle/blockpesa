@@ -44,6 +44,7 @@ contract Crowdfunding is Ownable {
     uint256 public numberOfCampaigns = 0;
     uint256 public projectTax = 2;
     address public contractOwner;
+    address public tokenAddress;
 
     event CampaignCreated(
         uint256 id,
@@ -188,18 +189,21 @@ contract Crowdfunding is Ownable {
         }
 
         // Transfer the tax to the contract owner
-        (bool sentToContractOwner, ) = payable(contractOwner).call{value: tax}(
-            ""
-        );
-        if (!sentToContractOwner) {
-            revert FailedToSendEtherToContractOwner();
-        }
+        // (bool sentToContractOwner, ) = payable(contractOwner).call{value: tax}(
+        //     ""
+        // );
+        // bool sentToContractOwner = safeTransfer(IERC20, contractOwner, tax);
+        // if (!sentToContractOwner) {
+        //     revert FailedToSendEtherToContractOwner();
+        // }
 
-        campaign.status = CampaignStatus.PAIDOUT;
-        emit CampaignStatusChanged(_id, CampaignStatus.PAIDOUT);
+        // campaign.status = CampaignStatus.PAIDOUT;
+        //safeTransfer(IERC20(tokenAddress), contractOwner, tax);
+
+        //emit CampaignStatusChanged(_id, CampaignStatus.PAIDOUT);
     }
 
-    function safeTransfer(IERC20 token, address to, uint256 amount) public {
+    function safeTransfer(IERC20 token, address to, uint256 amount) internal {
         token.safeTransfer(to, amount);
     }
 
@@ -208,7 +212,36 @@ contract Crowdfunding is Ownable {
         address from,
         address to,
         uint256 amount
-    ) public {
+    ) internal {
         token.safeTransferFrom(from, to, amount);
+    }
+
+    //     function payOutCampaign(uint256 _id) external onlyOwner {
+    //     Campaign storage campaign = campaigns[_id];
+
+    //     uint256 raised = campaign.raisedAmount;
+    //     uint256 tax = (raised * projectTax) / 100;
+
+    //     // Transfer the raised amount minus the tax to the campaign owner
+    //     (bool sentToOwner, ) = payable(campaign.owner).call{value: raised - tax}("");
+    //     if (!sentToOwner) {
+    //         revert FailedToSendEtherToCampaignOwner();
+    //     }
+
+    //     // ...
+    // }
+
+    function tranferToCampaignOwner(
+        uint256 _id,
+        uint256 amount
+    ) public onlyOwner {
+        Campaign storage campaign = campaigns[_id];
+        safeTransfer(IERC20(tokenAddress), campaign.owner, amount);
+        campaign.contributors.push(msg.sender);
+        campaign.raisedAmount += amount;
+    }
+
+    function setTokenAddress(address _tokenAddress) public onlyOwner {
+        tokenAddress = _tokenAddress;
     }
 }
