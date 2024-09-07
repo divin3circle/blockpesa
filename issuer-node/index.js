@@ -28,7 +28,7 @@ const requestMap = new Map();
 // GetQR returns auth request
 async function getAuthRequest(req, res) {
   // Audience is verifier id
-  const hostUrl = "<NGROK_URL>";
+  const hostUrl = " https://342a-105-163-1-117.ngrok-free.app";
   const sessionId = 1;
   const callbackURL = "/api/callback";
   const audience =
@@ -77,7 +77,7 @@ async function callback(req, res) {
   const tokenStr = raw.toString().trim();
   console.log(tokenStr);
 
-  const ethURL = "<AMOY_URL>";
+  const ethURL = "";
   const contractAddress = "0x1a4cC30f2aA0377b0c3bc9848766D90cb4404124";
   const keyDIR = "../keys";
 
