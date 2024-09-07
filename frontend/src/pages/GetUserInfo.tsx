@@ -7,18 +7,26 @@ type TUserPurpose = "Create campaigns" | "Back campaigns" | null;
 function GetUserInfo() {
   const navigate = useNavigate();
   const [username, setUserName] = React.useState<string>("");
+  const [phone, setPhone] = React.useState("");
+  const [code, setCode] = React.useState("");
   const [purpose, setPurpose] = React.useState<TUserPurpose>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
 
   const handleNext = () => {
     setLoading(true);
-    if (username === "" || purpose === null) {
+    if (username === "" || purpose === null || phone === "") {
       toast.error("Please fill in all fields");
       setLoading(false);
       return;
     }
-    console.log(username, purpose);
+
     if (purpose === "Back campaigns" && purpose !== null) {
+      const user = {
+        username,
+        phone,
+        purpose,
+      };
+      localStorage.setItem("user", JSON.stringify(user));
       //navigate to homepage
       navigate("/home", {
         replace: true,
@@ -28,6 +36,13 @@ function GetUserInfo() {
     }
 
     if (purpose === "Create campaigns" && purpose !== null) {
+      const user = {
+        username,
+        phone,
+        purpose,
+      };
+
+      localStorage.setItem("user", JSON.stringify(user));
       // navigate to kyc page
       navigate("/auth");
       toast("Credentials verification");
@@ -63,6 +78,35 @@ function GetUserInfo() {
             onChange={(e) => setUserName((e.target as HTMLInputElement).value)}
           />
         </label>
+        <div className="mt-2">
+          <div className="label">
+            <span className="kanit-regular text-gray-400">
+              Phone number (for M-pesa payments)
+            </span>
+          </div>
+          <div className="flex gap-2 items-center">
+            <select
+              className="select  outline-none bg-black kanit-regular text-gray-400 w-[30%]"
+              onChange={(e) => setCode((e.target as HTMLSelectElement).value)}
+            >
+              <option disabled selected className="text-sm">
+                Code
+              </option>
+              <option className="">
+                <div>
+                  <p>+254</p>
+                </div>
+              </option>
+            </select>
+            <input
+              type="text"
+              placeholder="701838690"
+              className="input input-bordered bg-black text-gray-400 kanit-regular w-[70%]"
+              value={phone}
+              onChange={(e) => setPhone((e.target as HTMLInputElement).value)}
+            />
+          </div>
+        </div>
         <select
           className="select select-accent bg-black w-full mt-4 kanit-regular text-gray-400"
           onChange={(e) =>
