@@ -6,6 +6,7 @@ import { calculateBarPercentage, daysLeft } from "../utils";
 import logo from "../assets/logo2.png";
 import { useActiveAccount } from "thirdweb/react";
 import mpesa from "../assets/mpesa.png";
+import { MultiStepLoader } from "../components/ui/multi-step-loader";
 
 function CampaignDetails() {
   const rate = 313823.14;
@@ -15,16 +16,54 @@ function CampaignDetails() {
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState(0);
   const [contributors, setContributors] = useState<any[]>([]);
+  const [makingPayment, setMakingPayment] = useState(false);
 
   const remainingDays = daysLeft(Number(state.deadline));
 
-  const handleDonate = () => {};
+  const handleDonate = () => {
+    setMakingPayment(true);
+    // make an mpesa stk push request
+    //confirm payment from mpesa
+    // send amount in eth to the campaign's contract
+  };
 
-  
   const convertToEth = (target: number) => {
     const a = (target / rate).toFixed(3);
     return Number(a).toLocaleString();
   };
+
+  const loadingStates = [
+    {
+      text: " Sending an M-Pesa STK Push request",
+    },
+    {
+      text: "Confirming payment from M-Pesa",
+    },
+    {
+      text: "Converting KES to ETH",
+    },
+    {
+      text: "Verifying campaign contract",
+    },
+    {
+      text: "Checking campaign credentials with PrivadoID",
+    },
+    {
+      text: "Sending funds to campaign contract",
+    },
+    {
+      text: "Waiting for confirmation",
+    },
+    {
+      text: "🥳",
+    },
+  ];
+
+  if (makingPayment) {
+    return (
+      <MultiStepLoader loadingStates={loadingStates} loading={makingPayment} />
+    );
+  }
 
   if (loading) {
     return (

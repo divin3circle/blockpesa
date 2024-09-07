@@ -44,7 +44,7 @@ function Sidebar() {
   const [isActive, setIsActive] = useState("dashboard");
   return (
     <div className="flex justify-between sticky h-[93vh] items-center flex-col top-5">
-      <Link to="/">
+      <Link to="/home">
         <Icon styles="w-[52px] h-[52px] bg-[#2c2f32]" imgUrl={logo} />
       </Link>
       <div className="flex-1 flex-col justify-between py-4 mt-12 rounded-[20px] items-center bg-[#1c1c24] w-[76px] relative">
