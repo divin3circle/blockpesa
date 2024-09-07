@@ -8,31 +8,51 @@ function GetUserInfo() {
   const navigate = useNavigate();
   const [username, setUserName] = React.useState<string>("");
   const [purpose, setPurpose] = React.useState<TUserPurpose>(null);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   const handleNext = () => {
+    setLoading(true);
     if (username === "" || purpose === null) {
       toast.error("Please fill in all fields");
+      setLoading(false);
       return;
     }
     console.log(username, purpose);
     if (purpose === "Back campaigns" && purpose !== null) {
       //navigate to homepage
+      navigate("/home", {
+        replace: true,
+      });
+      toast.success("User details saved successfully");
+      setLoading(false);
     }
 
     if (purpose === "Create campaigns" && purpose !== null) {
       // navigate to kyc page
+      navigate("/auth");
+      toast("Credentials verification");
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <span className="loading loading-bars loading-lg bg-[#4acd8d]"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center h-screen flex-col">
-      <h1 className="kanit-bold text-2xl text-center text-white">
+      <h1 className="kanit-bold text-2xl text-center text-gray-300">
         BlockPesa User Onboarding
       </h1>
       <div className="w-full md:w-1/4">
         <label className="form-control w-full">
           <div className="label">
             <span className="kanit-regular text-gray-400">
-              What is your name?
+              What should we call you😄?
             </span>
           </div>
           <input
