@@ -50,13 +50,18 @@ function CampaignDetails() {
           "Success. Request accepted for processing"
         ) {
           toast.success("Mpesa STK push request sent successfully");
-          const transaction = prepareContractCall({
-            contract,
-            method:
-              "function tranferToCampaignOwner(uint256 _id, uint256 amount)",
-            params: [state.pID, BigInt(amount)],
-          });
-          sendTransaction(transaction);
+          try {
+            const transaction = prepareContractCall({
+              contract,
+              method:
+                "function tranferToCampaignOwner(uint256 _id, uint256 amount)",
+              params: [state.pID, BigInt(amount)],
+            });
+            sendTransaction(transaction);
+            setMakingPayment(false);
+          } catch (error) {
+            console.error("Error sending transaction:", error);
+          }
         }
       })
       .catch((error) => {
