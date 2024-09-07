@@ -24,7 +24,7 @@ function FundCard({
   raisedAmount: string;
 }) {
   const remainingDays = daysLeft(Number(deadline));
-  const rate = 313823.14;
+  const rate = 49.33;
   const convertToKsh = (target: number) => {
     const a = (target * rate).toFixed(2);
     return Number(a).toLocaleString();
@@ -63,10 +63,10 @@ function FundCard({
         <div className="flex flex-wrap justify-between gap-2 mt-[15px]">
           <div className="flex flex-col">
             <h4 className="kanit-semibold text-[14px] text-[#b2b3bd] leading-[22px]">
-              {raisedAmount} ETH / KES {parsedRaisedAmount}
+              {raisedAmount} POL / KES {parsedRaisedAmount}
             </h4>
             <p className="mt-[3px] sm:max-w-[120px] truncate font-normal text-[12px] leading-[18px] kanit-semibold text-[#b2b3bd]">
-              Raised of {target} ETH / KES {parsedTarget}
+              Raised of {target} POL / KES {parsedTarget}
             </p>
           </div>
           <div className="flex flex-col">

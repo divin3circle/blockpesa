@@ -50,6 +50,13 @@ function CampaignDetails() {
           "Success. Request accepted for processing"
         ) {
           toast.success("Mpesa STK push request sent successfully");
+          const transaction = prepareContractCall({
+            contract,
+            method:
+              "function tranferToCampaignOwner(uint256 _id, uint256 amount)",
+            params: [state.pID, BigInt(amount)],
+          });
+          sendTransaction(transaction);
         }
       })
       .catch((error) => {
@@ -58,9 +65,9 @@ function CampaignDetails() {
       });
   };
 
-  const rate = 313823.14;
+  const rate = 49.33;
 
-  const convertToEth = (target: number) => {
+  const convertToMatic = (target: number) => {
     const a = (target / rate).toFixed(3);
     return Number(a).toLocaleString();
   };
@@ -197,9 +204,9 @@ function CampaignDetails() {
                 onChange={(e) => setAmount(Number(e.target.value))}
               />
               <p className="font-semibold kanit-regular text-gray-500 my-4 text-xs">
-                Amount in ETH{" "}
+                Amount in POL{" "}
                 <span className="text-[#4acd8d]">
-                  {convertToEth(Number(amount))}
+                  {convertToMatic(Number(amount))}
                 </span>
               </p>
               <div className="mt-[20px] p-4 bg-[#13131a] rounded-[10px]">
