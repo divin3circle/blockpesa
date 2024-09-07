@@ -2,10 +2,10 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import {CrowdFunding} from "../src/Crowdfunding.sol";
+import {Crowdfunding} from "../src/Crowdfunding.sol";
 
 contract CounterTest is Test {
-    CrowdFunding public crowdfunding;
+    Crowdfunding public crowdfunding;
 
     function setUp() public {
         // counter = new Counter();

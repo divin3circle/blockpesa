@@ -5,7 +5,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract CrowdFunding is Ownable {
+contract Crowdfunding is Ownable {
     using SafeERC20 for IERC20;
 
     //Error declarations
@@ -90,7 +90,7 @@ contract CrowdFunding is Ownable {
     }
 
     function contributeToCampaign(uint256 _id) public payable {
-        if (_id < numberOfCampaigns) {
+        if (_id > numberOfCampaigns) {
             revert CampaignDoesNotExist(campaigns[_id].id);
         }
         Campaign storage campaign = campaigns[_id];
@@ -198,6 +198,7 @@ contract CrowdFunding is Ownable {
         campaign.status = CampaignStatus.PAIDOUT;
         emit CampaignStatusChanged(_id, CampaignStatus.PAIDOUT);
     }
+
     function safeTransfer(IERC20 token, address to, uint256 amount) public {
         token.safeTransfer(to, amount);
     }
