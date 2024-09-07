@@ -13,3 +13,7 @@ deploy-sepolia:
 
 deploy-amoy:
 	@forge script script/DeployCrowdfunding.s.sol:DeployCrowdfunding --rpc-url $(AMOY_RPC_URL) --account developmentPrivateKey --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+deployMatic-amoy:
+	@forge script script/DeployMatic.s.sol:DeployMatic --rpc-url $(AMOY_RPC_URL) --account developmentPrivateKey --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+mint-amoy:
+	@forge script script/Interactions.s.sol:MintMatic --rpc-url $(AMOY_RPC_URL) --account developmentPrivateKey --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
