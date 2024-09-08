@@ -2,7 +2,7 @@ import React, { ChangeEvent } from "react";
 
 function FormField({
   labelName,
-  placeholder: placeholder,
+  placeholder,
   inputType,
   value,
   handleChange,
@@ -34,21 +34,19 @@ function FormField({
           rows={10}
           onChange={handleChange}
           placeholder={placeholder}
-          className="py-[15px] sm:px-[25px] px-[15px] outline-none border-[1px] border-[#3a3a43]  bg-transparent kanit-regular text-[#fff] rounded-[10px] text-[14px] placeholder:text-[#4b5264] sm:min-w-[300px]"
-        >
-          textarea
-        </textarea>
+          className="py-[15px] sm:px-[25px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent kanit-regular text-[#fff] rounded-[10px] text-[14px] placeholder:text-[#4b5264] sm:min-w-[300px]"
+        />
       ) : (
         <input
           required
           value={typeof value === "bigint" ? value.toString() : value}
           name={name}
-          step={100}
-          min={min}
+          step={inputType === "number" ? 100 : undefined}
+          min={inputType === "date" ? min : undefined}
           onChange={handleChange}
           type={inputType}
           placeholder={placeholder}
-          className="py-[15px] sm:px-[25px] px-[15px] outline-none border-[1px] border-[#3a3a43]  bg-transparent kanit-regular text-[#fff] rounded-[10px] text-[14px] placeholder:text-[#4b5264] sm:min-w-[300px]"
+          className="py-[15px] sm:px-[25px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent kanit-regular text-[#fff] rounded-[10px] text-[14px] placeholder:text-[#4b5264] sm:min-w-[300px]"
         />
       )}
     </label>
