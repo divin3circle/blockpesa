@@ -11,7 +11,11 @@ export function App() {
   const currentPath = location.pathname;
 
   return (
-    <main className="relative sm:-8 p-4 bg-[#13131a] min-h-screen flex flex-row">
+    <main
+      className={`relative sm:-8 p-4 ${
+        currentPath === "/auth" ? "bg-white" : "bg-[#13131a]"
+      } min-h-screen flex flex-row`}
+    >
       <div className="sm:flex hidden mr-10 relative">
         {currentPath === "/get-user-info" || currentPath === "/auth" ? null : (
           <Sidebar />
