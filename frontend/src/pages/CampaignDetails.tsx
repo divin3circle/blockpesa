@@ -53,9 +53,8 @@ function CampaignDetails() {
           try {
             const transaction = prepareContractCall({
               contract,
-              method:
-                "function tranferToCampaignOwner(uint256 _id, uint256 amount)",
-              params: [state.pID, BigInt(amount)],
+              method: "function contributeToCampaign(uint256 _id) payable",
+              params: [state.pId],
             });
             sendTransaction(transaction);
             setMakingPayment(false);

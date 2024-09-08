@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomButton from "./CustomButton";
 import logo from "../assets/logo2.png";
@@ -15,6 +15,17 @@ function Navbar() {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState("dashboard");
   const [toggleDrawer, setToggleDrawer] = useState(false);
+  const [userPurpose, setUserPurpose] = useState({});
+
+  useEffect(() => {
+    const userString = localStorage.getItem("user");
+    if (!userString) {
+      console.error("User not found in localStorage");
+      return;
+    }
+    const user = JSON.parse(userString);
+    setUserPurpose(user.purpose);
+  }, []);
 
   const address: string | undefined = account?.address;
   return (

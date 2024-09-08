@@ -9,6 +9,10 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
@@ -18,11 +22,14 @@
     "dotenv": "^16.4.5",
     "ethers": "^6.13.2",
     "framer-motion": "^11.5.4",
+    "qrcode.react": "^4.0.1",
     "react": "^18.3",
     "react-dom": "^18.3",
     "react-hook-form": "^7.53.0",
     "react-hot-toast": "^2.4.1",
+    "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.26.1",
+    "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.5.2",
     "thirdweb": "^5",
     "zod": "^3.23.8"
