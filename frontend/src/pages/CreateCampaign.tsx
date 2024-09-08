@@ -12,6 +12,12 @@ import { contract } from "../client";
 import { useActiveAccount } from "thirdweb/react";
 
 function CreateCampaign() {
+  const getTodayDate = () => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0); // Set time to 00:00:00 UTC
+    return today.toISOString().split('T')[0];
+  };
+
   const account = useActiveAccount();
   const address: string | undefined = account?.address;
   const { mutate: sendTransaction } = useSendTransaction();
@@ -22,7 +28,7 @@ function CreateCampaign() {
     title: "",
     description: "",
     goal: BigInt(0),
-    deadline: "",
+    deadline: getTodayDate(),
     image: "",
   });
 
@@ -67,13 +73,6 @@ function CreateCampaign() {
         setIsLoading(false);
       }
     }
-  };
-  const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
   };
   if (isLoading) {
     return (
