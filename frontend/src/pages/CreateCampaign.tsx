@@ -156,7 +156,7 @@ function CreateCampaign() {
             name="image"
           />
         </div>
-
+        
         <div className="flex justify-center items-center">
           <CustomButton
             btnType="submit"
