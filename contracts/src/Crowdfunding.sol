@@ -2,13 +2,9 @@
 pragma solidity ^0.8.9;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Crowdfunding is Ownable {
-    using SafeERC20 for IERC20;
-
-    //Error declarations
+    // Error declarations
     error DeadlineMustBeInTheFuture();
     error CampaignDoesNotExist(uint256 id);
     error CampaignHasEnded();
@@ -52,6 +48,7 @@ contract Crowdfunding is Ownable {
         uint256 target,
         uint256 deadline
     );
+    event Funded(address indexed sender, uint256 amount);
     event ContributionMade(uint256 id, address contributor, uint256 amount);
     event CampaignStatusChanged(uint256 id, CampaignStatus status);
 
@@ -90,11 +87,11 @@ contract Crowdfunding is Ownable {
     }
 
     function contributeToCampaign(uint256 _id) public payable {
-        if (_id > numberOfCampaigns) {
-            revert CampaignDoesNotExist(campaigns[_id].id);
+        if (_id >= numberOfCampaigns) {
+            revert CampaignDoesNotExist(_id);
         }
         Campaign storage campaign = campaigns[_id];
-        if (block.timestamp < campaign.deadline) {
+        if (block.timestamp > campaign.deadline) {
             revert CampaignHasEnded();
         }
         if (campaign.status != CampaignStatus.OPEN) {
@@ -104,11 +101,6 @@ contract Crowdfunding is Ownable {
         uint256 amount = msg.value;
         campaign.contributors.push(msg.sender);
         campaign.contributions.push(amount);
-
-        (bool sent, ) = payable(campaign.owner).call{value: amount}("");
-        if (!sent) {
-            revert FailedToSendEther();
-        }
 
         campaign.raisedAmount += amount;
 
@@ -123,8 +115,8 @@ contract Crowdfunding is Ownable {
     function getContributors(
         uint256 _id
     ) public view returns (address[] memory, uint256[] memory) {
-        if (_id < numberOfCampaigns) {
-            revert CampaignDoesNotExist(campaigns[_id].id);
+        if (_id >= numberOfCampaigns) {
+            revert CampaignDoesNotExist(_id);
         }
         return (campaigns[_id].contributors, campaigns[_id].contributions);
     }
@@ -141,15 +133,14 @@ contract Crowdfunding is Ownable {
     }
 
     function getCampaign(uint256 _id) public view returns (Campaign memory) {
-        if (_id > numberOfCampaigns) {
-            revert CampaignDoesNotExist(campaigns[_id].id);
+        if (_id >= numberOfCampaigns) {
+            revert CampaignDoesNotExist(_id);
         }
         return campaigns[_id];
     }
 
     function deleteCampaign(uint256 _id) public onlyOwner {
         Campaign storage campaign = campaigns[_id];
-        //Clarification needed @Dancan254
         if (campaign.status != CampaignStatus.OPEN) {
             revert CampaignIsNotOpenForContributions();
         }
@@ -197,18 +188,5 @@ contract Crowdfunding is Ownable {
 
         campaign.status = CampaignStatus.PAIDOUT;
         emit CampaignStatusChanged(_id, CampaignStatus.PAIDOUT);
-    }
-
-    function safeTransfer(IERC20 token, address to, uint256 amount) public {
-        token.safeTransfer(to, amount);
-    }
-
-    function safeTransferFrom(
-        IERC20 token,
-        address from,
-        address to,
-        uint256 amount
-    ) public {
-        token.safeTransferFrom(from, to, amount);
     }
 }
