@@ -63,7 +63,7 @@ function CreateCampaign() {
         });
         sendTransaction(transaction);
         console.log(transaction);
-        navigate("/");
+        navigate("/home");
         setIsLoading(false);
       }
     }
