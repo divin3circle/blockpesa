@@ -16,7 +16,7 @@ function Home() {
         const data = await readContract({
           contract,
           method:
-            "function getCampaigns() view returns ((address owner, string title, string description, uint256 target, uint256 deadline, uint256 raisedAmount, string image, address[] contributors, uint256[] contributions)[])",
+            "function getCampaigns() view returns ((uint256 id, address owner, string title, string description, uint256 target, uint256 deadline, uint256 raisedAmount, string image, address[] contributors, uint256[] contributions, uint8 status)[])",
           params: [],
         });
         const mutableData = data.map((campaign) => ({ ...campaign }));
