@@ -24,7 +24,7 @@ function FundCard({
   raisedAmount: string;
 }) {
   const remainingDays = daysLeft(Number(deadline));
-  const rate = 49.33;
+  const rate = 129;
   const convertToKsh = (target: number) => {
     const a = (target * rate).toFixed(2);
     return Number(a).toLocaleString();
