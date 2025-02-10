@@ -6,14 +6,24 @@ import {Crowdfunding} from "../src/Crowdfunding.sol";
 
 contract DeployCrowdfunding is Script {
     Crowdfunding public crowdFunding;
+    address usdt;
 
-    function setUp() public {}
+    event CrowdfundingDeployed(address indexed _crowdfunding);
 
     function run() public {
         vm.startBroadcast();
 
-        crowdFunding = new Crowdfunding();
+        deployBlockpesa(usdt);
 
         vm.stopBroadcast();
+    }
+
+    function deployBlockpesa(address _usdt) internal {
+        crowdFunding = new Crowdfunding(_usdt);
+        emit CrowdfundingDeployed(address(crowdFunding));
+    }
+
+    function setUsdtAddress(address _usdt) public {
+        usdt = _usdt;
     }
 }

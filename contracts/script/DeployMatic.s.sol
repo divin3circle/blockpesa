@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Matic} from "../src/Matic.sol";
+import {USDT} from "../src/Usdt.sol";
 
 contract DeployMatic is Script {
     function run() external {
@@ -12,7 +12,7 @@ contract DeployMatic is Script {
         vm.startBroadcast();
 
         // Deploy the Matic contract
-        Matic matic = new Matic(initialOwner);
+        USDT matic = new USDT(initialOwner);
 
         uint256 mintAmount = 10000 * 10 ** 18;
         matic.mint(initialOwner, mintAmount);
