@@ -2,9 +2,13 @@
 pragma solidity ^0.8.9;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract Crowdfunding is Ownable {
+    using SafeERC20 for IERC20;
     // Error declarations
+
     error DeadlineMustBeInTheFuture();
     error CampaignDoesNotExist(uint256 id);
     error CampaignHasEnded();
@@ -13,6 +17,7 @@ contract Crowdfunding is Ownable {
     error CampaignIsNotApproved();
     error FailedToSendEtherToCampaignOwner();
     error FailedToSendEtherToContractOwner();
+    error CampaignHasContributions();
 
     enum CampaignStatus {
         OPEN,
@@ -41,19 +46,16 @@ contract Crowdfunding is Ownable {
     uint256 public projectTax = 2;
     address public contractOwner;
 
-    event CampaignCreated(
-        uint256 id,
-        address owner,
-        string title,
-        uint256 target,
-        uint256 deadline
-    );
+    IERC20 public usdt;
+
+    event CampaignCreated(uint256 id, address owner, string title, uint256 target, uint256 deadline);
     event Funded(address indexed sender, uint256 amount);
     event ContributionMade(uint256 id, address contributor, uint256 amount);
     event CampaignStatusChanged(uint256 id, CampaignStatus status);
 
-    constructor() Ownable(msg.sender) {
+    constructor(address _usdt) Ownable(msg.sender) {
         contractOwner = msg.sender;
+        usdt = IERC20(_usdt);
     }
 
     function createCampaign(
@@ -86,7 +88,8 @@ contract Crowdfunding is Ownable {
         return campaign.id;
     }
 
-    function contributeToCampaign(uint256 _id) public payable {
+    // TODO: Update the function to use USD instead of ETH
+    function contributeToCampaign(uint256 _id, uint256 _amount, address /* _from*/ ) public {
         if (_id >= numberOfCampaigns) {
             revert CampaignDoesNotExist(_id);
         }
@@ -98,7 +101,8 @@ contract Crowdfunding is Ownable {
             revert CampaignIsNotOpenForContributions();
         }
 
-        uint256 amount = msg.value;
+        uint256 amount = _amount;
+        usdt.safeTransferFrom(msg.sender, address(this), amount);
         campaign.contributors.push(msg.sender);
         campaign.contributions.push(amount);
 
@@ -112,9 +116,7 @@ contract Crowdfunding is Ownable {
         }
     }
 
-    function getContributors(
-        uint256 _id
-    ) public view returns (address[] memory, uint256[] memory) {
+    function getContributors(uint256 _id) public view returns (address[] memory, uint256[] memory) {
         if (_id >= numberOfCampaigns) {
             revert CampaignDoesNotExist(_id);
         }
@@ -141,16 +143,16 @@ contract Crowdfunding is Ownable {
 
     function deleteCampaign(uint256 _id) public onlyOwner {
         Campaign storage campaign = campaigns[_id];
-        if (campaign.status != CampaignStatus.OPEN) {
-            revert CampaignIsNotOpenForContributions();
+        if (campaign.raisedAmount > 0) {
+            revert CampaignHasContributions();
         }
-        campaign.status = CampaignStatus.DELETED;
+        delete campaigns[_id];
         emit CampaignStatusChanged(_id, CampaignStatus.DELETED);
 
         // Refund logic can be added here if needed
     }
 
-    function requestRefund(uint256 _id) public onlyOwner {
+    function requestRefund(uint256 _id) public {
         Campaign storage campaign = campaigns[_id];
         if (campaign.status != CampaignStatus.APPROVED) {
             revert CampaignIsNotApproved();
@@ -171,17 +173,13 @@ contract Crowdfunding is Ownable {
         uint256 tax = (raised * projectTax) / 100;
 
         // Transfer the raised amount minus the tax to the campaign owner
-        (bool sentToOwner, ) = payable(campaign.owner).call{
-            value: raised - tax
-        }("");
+        (bool sentToOwner,) = payable(campaign.owner).call{value: raised - tax}("");
         if (!sentToOwner) {
             revert FailedToSendEtherToCampaignOwner();
         }
 
         // Transfer the tax to the contract owner
-        (bool sentToContractOwner, ) = payable(contractOwner).call{value: tax}(
-            ""
-        );
+        (bool sentToContractOwner,) = payable(contractOwner).call{value: tax}("");
         if (!sentToContractOwner) {
             revert FailedToSendEtherToContractOwner();
         }
@@ -189,4 +187,6 @@ contract Crowdfunding is Ownable {
         campaign.status = CampaignStatus.PAIDOUT;
         emit CampaignStatusChanged(_id, CampaignStatus.PAIDOUT);
     }
+
+    receive() external payable {}
 }
