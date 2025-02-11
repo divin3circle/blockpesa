@@ -18,6 +18,7 @@ function CampaignDetails() {
   const account = useActiveAccount();
   const address: string | undefined = account?.address;
   const [loading, setLoading] = useState(false);
+  const [phone, setPhone] = useState<string>("");
   const [amount, setAmount] = useState(0);
   const [contributors, setContributors] = useState<any[]>([]);
   const { mutate: sendTransaction } = useSendTransaction();
@@ -207,6 +208,15 @@ function CampaignDetails() {
                 placeholder="Amount in KES"
                 onChange={(e) => setAmount(Number(e.target.value))}
               />
+              <div className="mt-[20px]">
+                <input
+                  type="text"
+                  placeholder="Enter your phone number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full bg-transparent p-4 rounded-[10px] text-white sm:px-[20px] px-[15px] outline-none kanit-regular border-[1px] border-[#3a3a43] text-[18px] leading-[30px] placeholder:text-[#4b5264] "
+                />
+              </div>
               <p className="font-semibold kanit-regular text-gray-500 my-4 text-xs">
                 Amount in POL{" "}
                 <span className="text-[#4acd8d]">
@@ -231,6 +241,9 @@ function CampaignDetails() {
                   onClick={handleDonate}
                 />
               </div>
+
+
+
             </div>
           </div>
         </div>
